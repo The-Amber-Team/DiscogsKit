@@ -38,7 +38,7 @@ let release: ReleaseResponse = try await discogs.get(for: Releases.get(id: 30490
 let search: SearchResponse = try await discogs.get(for: Database.search(query: "Radiohead"))
 ```
 
-> NOTE:
+> [!NOTE]
 > In this example here, `ReleaseResponse` and `SearchResponse` aren't from DiscogsKit.
 
 ## Client Overview
