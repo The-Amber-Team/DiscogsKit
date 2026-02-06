@@ -220,8 +220,7 @@ public final class Discogs {
 		req.setValue(self.userAgent, forHTTPHeaderField: "User-Agent")
 		req.setValue(auth, forHTTPHeaderField: "Authorization")
 
-		if method.hasBody {
-			let body: Encodable = endpoint.body!
+		if method.hasBody, let body: Encodable = endpoint.body {
 			let encoder: JSONEncoder = JSONEncoder()
 			let bodyData: Data = try encoder.encode(body)
 			req.httpBody = bodyData
