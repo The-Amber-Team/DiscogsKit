@@ -255,7 +255,7 @@ public final class Discogs {
 
 	/// Requests the user to authenticate using their Discogs account, through [discogs.com](https://discogs.com/), using Apple's [Authentication Services](https://developer.apple.com/documentation/authenticationservices) API.
 	public func authorize(using webAuthenticationSession: WebAuthenticationSession, callbackURLScheme: String) async throws -> URL {
-		var req: URLRequest = try self.makeRequest(for: Oauths.requestToken)
+		var req: URLRequest = try self.makeRequest(for: Oauths.requestToken, using: .post)
 		req = self.timedRequest(using: req, callback: callbackURLScheme)
 
 		let data: Data = try await self.makeCall(using: req).0
