@@ -253,14 +253,14 @@ public final class Discogs {
 
 	/// Requests the user to authenticate using their Discogs account, through [discogs.com](https://discogs.com/), using Apple's [Authentication Services](https://developer.apple.com/documentation/authenticationservices) API.
 	public func authorize(using webAuthenticationSession: WebAuthenticationSession, callbackURLScheme: String) async throws -> URL {
-		guard let reqToken: String = try await self.requestToken(callbackURLScheme: callbackURLScheme), let token: String = URLComponents(string: "?\(reqToken)")?.queryItems?.first(where: { $0.name == "oauth_token" })?.value else {
+		guard let reqToken: String = try await self.requestToken(callbackURLScheme: callbackURLScheme + "://"), let token: String = URLComponents(string: "?\(reqToken)")?.queryItems?.first(where: { $0.name == "oauth_token" })?.value else {
 			throw DiscogsError.badResponse
 		}
 
 		guard var authorizeURL: URL = Oauths.authorize.url else { throw DiscogsError.badURL }
 		authorizeURL.append(queryItems: [.init(name: "oauth_token", value: token)])
 
-		return try await webAuthenticationSession.authenticate(using: authorizeURL, callbackURLScheme: callbackURLScheme)
+		return try await webAuthenticationSession.authenticate(using: authorizeURL, callbackURLScheme: callbackURLScheme) // cannot have ://
 	}
 
 	public func requestToken(callbackURLScheme: String) async throws -> String? {
