@@ -238,10 +238,9 @@ public final class Discogs {
 		let (data, res) = try await URLSession.shared.data(for: req)
 
 		if let httpRes: HTTPURLResponse = res as? HTTPURLResponse {
-			let isError: Bool = httpRes.statusCode < 200 || httpRes.statusCode > 299
-			if isError {
+			if httpRes.statusCode < 200 || httpRes.statusCode > 299 {
 				if let str = String(data: data, encoding: .utf8) {
-					print(str)
+					print("[Error \(httpRes.statusCode)] \(str)")
 				}
 				throw DiscogsError.badResponse
 			}
@@ -265,7 +264,7 @@ public final class Discogs {
 	}
 
 	public func requestToken(callbackURLScheme: String) async throws -> String? {
-		var req: URLRequest = try self.makeRequest(for: Oauths.requestToken, using: .post)
+		var req: URLRequest = try self.makeRequest(for: Oauths.requestToken)
 		req = self.timedRequest(using: req, callback: callbackURLScheme)
 
 		let data: Data = try await self.makeCall(using: req).0
@@ -279,11 +278,12 @@ public final class Discogs {
 	private func timedRequest(using request: URLRequest, callback: String, verifier: String? = nil) -> URLRequest {
 		var added: String = ""
 		if let verifier {
-			added = "oauth_verifier=\"\(verifier)\""
+			added = ", oauth_verifier=\"\(verifier)\"" // fuck this comma
 		}
 
 		var req: URLRequest = request
-		req.setValue("Oauth oauth_consumer_key=\"\(self.consumerKey!)\", oauth_nonce=\"\(UUID().uuidString)\", oauth_signature=\"\(self.consumerSecret!)\", oauth_signature_method=\"PLAINTEXT\", oauth_timestamp=\"\(Date.now.timeIntervalSince1970)\", oauth_callback=\"\(callback)\", \(added)", forHTTPHeaderField: "Authorization")
+		req.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+		req.setValue("OAuth oauth_consumer_key=\"\(self.consumerKey!)\",oauth_nonce=\"\(UUID().uuidString)\",oauth_signature=\"\(self.consumerSecret!)&\",oauth_signature_method=\"PLAINTEXT\",oauth_timestamp=\"\(Int(Date.now.timeIntervalSince1970))\",oauth_callback=\"\(callback)\",oauth_version=\"1.0\"\(added)", forHTTPHeaderField: "Authorization")
 
 		return req
 	}
