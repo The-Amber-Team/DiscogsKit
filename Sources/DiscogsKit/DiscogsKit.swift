@@ -287,7 +287,7 @@ public final class Discogs {
 		return String(data: data, encoding: .utf8)
 	}
 
-	public func accessToken(oauthToken: String, verifierToken: String) async throws -> Data {
+	public func accessToken(oauthToken: String, verifierToken: String) async throws -> String? {
 		guard let secretToken else { throw DiscogsError.missingStep }
 
 		var req: URLRequest = try self.makeRequest(for: Oauths.accessToken, using: .post)
@@ -298,7 +298,8 @@ public final class Discogs {
 			print("New auth: \(auth)")
 		}
 
-		return try await self.makeCall(using: req).0
+		let data: Data = try await self.makeCall(using: req).0
+		return String(data: data, encoding: .utf8)
 	}
 
 	/// Creates a "timed" request (usable with ``Oauths/requestToken`` for example)
