@@ -283,6 +283,7 @@ public final class Discogs {
 		if var auth: String = req.value(forHTTPHeaderField: "Authorization") {
 			auth += ",oauth_token=\"\(oauthToken)\",oauth_verifier=\"\(verifierToken)\""
 			req.setValue(auth, forHTTPHeaderField: "Authorization")
+			print("New auth: \(auth)")
 		}
 
 		return try await self.makeCall(using: req).0
