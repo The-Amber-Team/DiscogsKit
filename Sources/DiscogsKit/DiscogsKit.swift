@@ -333,7 +333,7 @@ public final class Discogs {
 }
 
 private extension WebAuthenticationSession {
-	func authenticate(using url: URL, callback: String) async throws -> URL {
+	func authenticate(using url: URL, callback: String, browserSession: WebAuthenticationSession.BrowserSession = .shared) async throws -> URL {
 		if #available(iOS 17.4, macOS 14.4, watchOS 10.4, tvOS 17.4, visionOS 1.0, *) {
 			return try await self.authenticate(
 				using: url,
@@ -342,7 +342,11 @@ private extension WebAuthenticationSession {
 				additionalHeaderFields: [:]
 			)
 		} else {
-			return try await self.authenticate(using: url, callbackURLScheme: callback, preferredBrowserSession: .ephemeral)
+			return try await self.authenticate(
+				using: url,
+				callbackURLScheme: callback,
+				preferredBrowserSession: browserSession
+			)
 		}
 	}
 }
