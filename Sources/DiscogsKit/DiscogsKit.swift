@@ -20,6 +20,8 @@ public final class Discogs {
     public var consumerSecret: String? = nil
 	public var token: String? = nil // user token
 
+	private var secretToken: String? = nil
+
 	/// Create a Discogs instance with the app's name, version and URL. Also requires the consumer key and the consumer secret.
 	public init(name: String, version: String, aboutURL: URL = URL(string: "https://github.com/lumaa-dev/DiscogsKit")!, consumerKey: String? = nil, consumerSecret: String? = nil, personalToken: String? = nil) {
         self.name = name
@@ -265,6 +267,10 @@ public final class Discogs {
 			newURL = newURL.replacing(/:\/\/.+/, with: "")
 		}
 
+		if let secret: String = URLComponents(string: "?\(reqToken)")?.queryItems?.first(where: { $0.name == "oauth_token" })?.value {
+			self.secretToken = secret
+		}
+
 		return try await webAuthenticationSession.authenticate(using: authorizeURL, callback: newURL)
 
 	}
@@ -275,7 +281,6 @@ public final class Discogs {
 		if var auth: String = req.value(forHTTPHeaderField: "Authorization") {
 			auth += ",oauth_signature=\"\(self.consumerSecret!)&\""
 			req.setValue(auth, forHTTPHeaderField: "Authorization")
-			print("New auth: \(auth)")
 		}
 
 		let data: Data = try await self.makeCall(using: req).0
@@ -283,10 +288,12 @@ public final class Discogs {
 	}
 
 	public func accessToken(oauthToken: String, verifierToken: String) async throws -> Data {
+		guard let secretToken else { throw DiscogsError.missingStep }
+
 		var req: URLRequest = try self.makeRequest(for: Oauths.accessToken, using: .post)
 		req = self.timedRequest(using: req)
 		if var auth: String = req.value(forHTTPHeaderField: "Authorization") {
-			auth += ",oauth_token=\"\(oauthToken)\",oauth_verifier=\"\(verifierToken)\",oauth_signature=\"\(self.consumerSecret!)&\(self.consumerSecret!)\""
+			auth += ",oauth_token=\"\(oauthToken)\",oauth_verifier=\"\(verifierToken)\",oauth_signature=\"\(self.consumerSecret!)&\(secretToken)\""
 			req.setValue(auth, forHTTPHeaderField: "Authorization")
 			print("New auth: \(auth)")
 		}

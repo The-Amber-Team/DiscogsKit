@@ -17,4 +17,7 @@ public enum DiscogsError: Error {
 
     /// The HTTP request's method isn't compatible with the associated ``DiscogsEndpoint``.
     case badMethod
+
+	/// The OAuth function has been used too early
+	case missingStep
 }
