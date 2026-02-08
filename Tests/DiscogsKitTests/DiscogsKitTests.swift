@@ -39,20 +39,17 @@ func reqToken() async throws {
 	#expect(data != nil)
 }
 
-//@Test
-//func acToken() async throws {
-//	guard let plist: [String: String] = readSecret(), let key: String = plist["consumerKey"], let secret = plist["consumerSecret"] else { fatalError("Found nil instead of Secret.plist data") }
-//
-//	let app: Discogs = .init(name: "DiscogsKitTests", version: "1.0.0", consumerKey: key, consumerSecret: secret)
-//	let reqTokenQueries: String? = try await app.requestToken(callbackURLScheme: "amberapp://")
-//
-//	if let reqTokenQueries, let reqToken: String = querify(from: reqTokenQueries).first(where: { $0.name == "oauth_token" })?.value {
-//		let data: Data = try await app.accessToken(requestToken: reqToken)
-//
-//		print(data)
-//		#expect(!data.isEmpty)
-//	}
-//}
+@Test
+func identity() async throws {
+	guard let plist: [String: String] = readSecret(), let okey: String = plist["oauthToken"], let osecret = plist["oauthTokenSecret"], let key: String = plist["consumerKey"], let secret = plist["consumerSecret"] else { fatalError("Found nil instead of Secret.plist data") }
+
+	let app: Discogs = .init(name: "DiscogsKitTests", version: "1.0.0", consumerKey: key, consumerSecret: secret)
+	app.oauthToken = okey
+	app.oauthSecretToken = osecret
+
+	let data: Data = try await app.send(for: Oauths.identity).0
+	#expect(!data.isEmpty)
+}
 
 private func readSecret() -> [String: String]? {
 	if let path = Bundle.module.path(forResource: "Secret", ofType: "plist") {

@@ -191,7 +191,10 @@ public final class Discogs {
         guard var apiURL: URL = URL(string: "https://api.discogs.com\(path)") else { throw DiscogsError.badURL }
         apiURL.append(queryItems: queries)
 
-		let auth: String = self.token != nil ? "Discogs token=\(self.token!)" : "Discogs key=\(self.consumerKey!), secret=\(self.consumerSecret!)"
+		var auth: String = self.token != nil ? "Discogs token=\(self.token!)" : "Discogs key=\(self.consumerKey!),secret=\(self.consumerSecret!)"
+		if let oauthToken, let oauthSecretToken {
+			auth = "OAuth oauth_consumer_key=\"\(self.consumerKey!)\",oauth_token=\"\(oauthToken)\",oauth_signature_method=\"PLAINTEXT\",oauth_signature=\"\(self.consumerSecret!)&\(oauthSecretToken)\",oauth_timestamp=\"\(Int(Date.now.timeIntervalSince1970))\",oauth_nonce=\"\(UUID().uuidString)\",oauth_token_secret=\"\(oauthSecretToken)\",oauth_version=\"1.0\""
+		}
 
         var req: URLRequest = .init(url: apiURL)
         req.httpMethod = method.rawValue
@@ -222,7 +225,7 @@ public final class Discogs {
 
 		var auth: String = self.token != nil ? "Discogs token=\(self.token!)" : "Discogs key=\(self.consumerKey!),secret=\(self.consumerSecret!)"
 		if let oauthToken, let oauthSecretToken {
-			auth = "OAuth oauth_consumer_key=\"\(self.consumerKey!)\",oauth_token=\"\(oauthToken)\",oauth_signature_method=\"PLAINTEXT\",oauth_signature=\"\(self.consumerSecret!)}&\(oauthSecretToken)\",oauth_timestamp=\"\(Int(Date.now.timeIntervalSince1970))\",oauth_nonce=\"\(UUID().uuidString)\",oauth_token_secret=\"\(oauthSecretToken)\",oauth_version=\"1.0\""
+			auth = "OAuth oauth_consumer_key=\"\(self.consumerKey!)\",oauth_token=\"\(oauthToken)\",oauth_signature_method=\"PLAINTEXT\",oauth_signature=\"\(self.consumerSecret!)&\(oauthSecretToken)\",oauth_timestamp=\"\(Int(Date.now.timeIntervalSince1970))\",oauth_nonce=\"\(UUID().uuidString)\",oauth_token_secret=\"\(oauthSecretToken)\",oauth_version=\"1.0\""
 		}
 
 		var req: URLRequest = .init(url: apiURL)
