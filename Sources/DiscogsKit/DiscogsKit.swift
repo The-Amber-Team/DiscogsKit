@@ -189,7 +189,9 @@ public final class Discogs {
     /// - Returns: An all-ready to use `URLRequest`.
     public func makeRequest<Body: Encodable>(for path: String = "/", using method: Discogs.HTTPMethod = .get, queries: [URLQueryItem] = [], body: Body = EmptyBody()) throws -> URLRequest {
         guard var apiURL: URL = URL(string: "https://api.discogs.com\(path)") else { throw DiscogsError.badURL }
-        apiURL.append(queryItems: queries)
+
+		let filtered = queries.filter { $0.value != nil }
+        apiURL.append(queryItems: filtered)
 
 		var auth: String = self.token != nil ? "Discogs token=\(self.token!)" : "Discogs key=\(self.consumerKey!),secret=\(self.consumerSecret!)"
 		if let oauthToken, let oauthSecretToken {
@@ -221,7 +223,9 @@ public final class Discogs {
 	/// - Returns: An all-ready to use `URLRequest`.
 	public func makeRequest(for endpoint: any DiscogsEndpoint, using method: Discogs.HTTPMethod = .get) throws -> URLRequest {
 		guard var apiURL: URL = URL(string: "https://api.discogs.com\(endpoint.path)") else { throw DiscogsError.badURL }
-		apiURL.append(queryItems: endpoint.queries)
+
+		let filtered = endpoint.queries.filter { $0.value != nil }
+		apiURL.append(queryItems: filtered)
 
 		var auth: String = self.token != nil ? "Discogs token=\(self.token!)" : "Discogs key=\(self.consumerKey!),secret=\(self.consumerSecret!)"
 		if let oauthToken, let oauthSecretToken {
