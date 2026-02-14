@@ -161,7 +161,7 @@ public enum UserCollections: DiscogsEndpoint {
 				return "/users/\(username)/collection/folders/\(folderId)/releases/\(releaseId)/instances/\(instanceId)"
 			case .customFields(let username):
 				return "/users/\(username)/collection/fields"
-			case .editFields(let username, let value, let folderId, let releaseId, let instanceId, let fieldId):
+			case .editFields(let username, _, let folderId, let releaseId, let instanceId, let fieldId):
 				return "/users/\(username)/collection/folders/\(folderId)/releases/\(releaseId)/instances/\(instanceId)/fields/\(fieldId)"
 			case .value(let username):
 				return "/users/\(username)/collection/value"
@@ -187,10 +187,10 @@ public enum UserCollections: DiscogsEndpoint {
 				return [
 					.init(name: "page", value: page != nil ? "\(page!)" : nil),
 					.init(name: "per_page", value: perPage != nil ? "\(perPage!)" : nil),
-					.init(name: "sort_order", value: sort?.rawValue),
+					.init(name: "sort", value: sort?.rawValue),
 					order.query
 				]
-			case .editFields(let username, let value, let folderId, let releaseId, let instanceId, let fieldId):
+			case .editFields(_, let value, _, _, _, _):
 				return [
 					.init(name: "value", value: value)
 				]
@@ -201,7 +201,7 @@ public enum UserCollections: DiscogsEndpoint {
 
 	public var body: (any Encodable)? {
 		switch self {
-			case .createFolder(let username, let name):
+			case .createFolder(_, let name):
 				return NewFolderBody(name: name)
 			case .rateRelease(_, _, _, _, let rating):
 				return RatingBody(rating: rating)

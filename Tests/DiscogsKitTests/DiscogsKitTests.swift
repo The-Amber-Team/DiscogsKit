@@ -16,6 +16,17 @@ func getRelease() async throws {
 }
 
 @Test
+func getCollection() async throws {
+	guard let plist: [String: String] = readSecret(), let key: String = plist["consumerKey"], let secret = plist["consumerSecret"] else { fatalError("Found nil instead of Secret.plist data") }
+
+	let app: Discogs = .init(name: "DiscogsKitTests", version: "1.0.0", consumerKey: key, consumerSecret: secret)
+	let data: Data = try await app.send(for: UserCollections.releases(username: "nthnos", id: 0, perPage: 1, sort: .added)).0
+
+	print(String(data: data, encoding: .utf8) ?? "*No data returned*")
+	#expect(!data.isEmpty)
+}
+
+@Test
 func search() async throws {
 	guard let plist: [String: String] = readSecret(), let token = plist["personalToken"] else { fatalError("Found nil instead of Secret.plist data") }
 
