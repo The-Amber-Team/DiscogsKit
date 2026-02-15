@@ -166,7 +166,6 @@ public final class Discogs {
 	/// - Parameters:
 	///   - path: API Path.
 	///   - method: HTTP method to use.
-	///   - body: The body to send along with the request.
 	/// - Throws: ``DiscogsError/badURL`` if the URL is malformed or incorrect.
 	/// - Throws: ``DiscogsError/badResponse`` if the URL response is malformed, incorrect, or returned an error.
 	/// - Returns: Returns the response's data and HTTP response.
