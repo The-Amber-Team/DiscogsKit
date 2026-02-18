@@ -49,7 +49,6 @@ public enum UserCollections: DiscogsEndpoint {
 	/// Folders `0` and `1` cannot be renamed.
 	///
 	/// - Important: [Authentication](https://www.discogs.com/developers#page:authentication) as the collection owner is required.
-	@available(iOS, introduced: 26.0, deprecated: 26.1, message: "Missing parameter, might not work properly.")
 	case editFolder(username: String, id: UInt)
 
 	/// View the user’s collection folders which contain a specified release.
