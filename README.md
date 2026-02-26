@@ -62,4 +62,4 @@ A `Secret_TEMPLATE.plist` is provided at `Tests/DiscogsKitTests/Data/Secret_TEMP
 The `Secret_TEMPLATE.plist` file needs to be filled with actual tokens and keys, and renamed to `Secret.plist`.
 
 # Copyright
-© Lumaa 2026
+© Amber Team 2026
