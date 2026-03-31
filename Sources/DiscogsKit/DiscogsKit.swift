@@ -257,7 +257,7 @@ public final class Discogs {
 		let (data, res) = try await URLSession.shared.data(for: req)
 
 		if let httpRes: HTTPURLResponse = res as? HTTPURLResponse {
-			if httpRes.statusCode < 200 || httpRes.statusCode > 299 {
+			if !(200...299).contains(httpRes.statusCode) {
 				if let str = String(data: data, encoding: .utf8) {
 					print("[Error \(httpRes.statusCode)] \(str)")
 				}
